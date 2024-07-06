@@ -1,8 +1,46 @@
-<div>
-    <h1>Products</h1>
-    <ul id="products_list">
-    </ul>
+<div class="box">
+    <h1>Real Time Products</h1>
+    <hr>
+    <div class="products-form">
+        <h2>Create Product</h2>
+        <form>
+            <label for="title">Title</label>
+            <input name="title" id="title" type="text">
+
+            <label for="description">Description</label>
+            <input name="description" id="description" type="text">
+
+            <label for="code">Code</label>
+            <input name="code" id="code" type="text">
+
+            <label for="price">Price</label>
+            <input name="price" id="price" type="number">
+
+            <label for="stock">Stock</label>
+            <input name="stock" id="stock" type="number">
+
+            <label for="category">Category</label>
+            <input name="category" id="category" type="text">
+
+            <button id="button-create" onclick="createProduct(event)">Create</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div class="products-box">
+        {{#each products}}
+            <div class="product-card">
+                <h3>{{this.title}}</h3>
+                <hr>
+                <p>Category: {{this.category}}</p>
+                <p>Description: {{this.description}}</p>
+                <p>Price: $ {{this.price}}</p>
+                <button id="button-delete" onclick="deleteProduct('{{this._id}}')">Delete</button>
+            </div>
+        {{/each}}
+    </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/main.js"></script>
+<script src="/js/index.js"></script>

@@ -13,4 +13,4 @@ To install nodemon server reloader:
 npm install --save-dev nodemon
 
 To run local nodemon: 
-npm start
+npm run dev

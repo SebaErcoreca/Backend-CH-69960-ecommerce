@@ -6,16 +6,19 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.js",
-    "dev": "nodemon app.js"
+    "start": "src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@handlebars/allow-prototype-access": "^1.0.5",
     "express": "^4.19.2",
     "express-handlebars": "^7.1.2",
     "handlebars": "^4.7.8",
+    "mongoose": "^8.4.4",
+    "mongoose-paginate-v2": "^1.8.2",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {

@@ -1,66 +1,127 @@
 import { Router } from "express";
-import fs from "fs"
+import { ProductManager } from "../managers/productManager.js";
+import { CartManager } from "../managers/cartManager.js";
 
-const CartsRouter = Router();
+const CartRouter = Router();
+const productManager = new ProductManager();
+const cartManager = new CartManager(productManager);
 
-const products = JSON.parse(fs.readFileSync('./storage/products.json', 'utf-8'));
-const carts = JSON.parse(fs.readFileSync('./storage/carts.json', 'utf-8'));
+CartRouter.get("/:cid", async (req, res) => {
+  try {
+    const result = await cartManager.getProductsFromCartByID(req.params.cid);
+    res.send({
+      status: "success",
+      payload: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
 
-CartsRouter.get('/', (req, res) => {
-    res.json(carts);
-})
+CartRouter.post("/", async (req, res) => {
+  try {
+    const result = await cartManager.createCart();
+    res.send({
+      status: "success",
+      payload: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
 
-CartsRouter.get('/:cid', (req, res) => {
-    const { cid } = req.params;
-    const cart = carts.find(cart => cart.id == cid);
-    
-    if (cid > carts[carts.length - 1].id || cid < 1 || !cart) {
-        res.status(400).json(`Couldnt find the cart with id: ${cid}, select one between 1 and ${carts[carts.length - 1].id}`)
-    } else {
-        try {
-            res.json(cart);
-        } catch (err) {
-            console.log(err)
-        }
-    }
-})
+CartRouter.post("/:cid/product/:pid", async (req, res) => {
+  try {
+    const result = await cartManager.addProductByID(
+      req.params.cid,
+      req.params.pid
+    );
+    res.send({
+      status: "success",
+      payload: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
 
-CartsRouter.post('/', (req, res) => {
-    const newId = carts[carts.length - 1].id + 1;
-    const newCart = {
-        id: newId,
-        products: []
-    };
+CartRouter.delete("/:cid/product/:pid", async (req, res) => {
+  try {
+    const result = await cartManager.deleteProductByID(
+      req.params.cid,
+      req.params.pid
+    );
+    res.send({
+      status: "success",
+      payload: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
 
-    carts.push(newCart);
-    fs.writeFileSync('./storage/carts.json', JSON.stringify(carts, null, '\t'));
-    res.json(carts);
-})
+CartRouter.put("/:cid", async (req, res) => {
+  try {
+    const result = await cartManager.updateAllProducts(
+      req.params.cid,
+      req.body.products
+    );
+    res.send({
+      status: "success",
+      payload: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
 
-CartsRouter.post('/:cid/product/:pid', (req, res) => {
-    const { cid, pid } = req.params;
+CartRouter.put("/:cid/product/:pid", async (req, res) => {
+  try {
+    const result = await cartManager.updateProductByID(
+      req.params.cid,
+      req.params.pid,
+      req.body.quantity
+    );
+    res.send({
+      status: "success",
+      payload: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
 
-    const cart = carts.find(cart => cart.id == cid);
-    const product = products.find(product => product.id == pid);
-    const isExistent = cart.products.find(product => product.product == pid);
+CartRouter.delete("/:cid", async (req, res) => {
+  try {
+    const result = await cartManager.deleteAllProducts(req.params.cid);
+    res.send({
+      status: "success",
+      payload: result,
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
 
-    if (cid > carts[carts.length - 1].id || cid < 1 || !cart) {
-        res.status(400).json(`Couldnt find the cart with id: ${cid}, select one between 1 and ${carts[carts.length - 1].id}`)
-    } else if (!product) {
-        res.status(400).json(`Couldnt find the product with id: ${pid}, select one between 1 and ${products[products.length - 1].id}`)
-    } else {
-        try {
-            if (isExistent) {
-                isExistent.quantity += 1;
-            } else {
-                cart.products.push({ product: product.id, quantity: 1 });
-            }
-            fs.writeFileSync('./storage/carts.json', JSON.stringify(carts, null, '\t'));
-            res.json(cart);
-        } catch (err) {
-            console.log(err)
-        }
-    }
-})
-
-export default CartsRouter
+export default CartRouter;

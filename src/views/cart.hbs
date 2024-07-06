@@ -1,0 +1,15 @@
+<div class="box">
+    <div class="view-products"><a id="button-products" class="button" href="/">Back to Home</a></div>
+    <h1>Products</h1>
+    <div class="products-box">
+        {{#each products}}
+            <div class="product-card">
+                <h3>{{this.product.title}}</h3>
+                <hr>
+                <p>Category: {{this.product.category}}</p>
+                <p>Price: $ {{this.product.price}}</p>
+                <p>Quantity: {{this.quantity}}</p>
+            </div>
+        {{/each}}
+    </div>
+</div>
